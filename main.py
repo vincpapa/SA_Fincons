@@ -1,7 +1,7 @@
 import cleaning as c
 from lemming import lemmatizer
 import roberta as r
-# prova
+
 
 def processing_text(text):
     text = c.emoji(text)
@@ -20,7 +20,8 @@ def processing_text(text):
 
 if __name__ == '__main__':
     model, tokenizer = r.load_roberta()
-    tweet = 'The food I have eaten was not so great'
+    #
+    tweet = 'ZOMBIE CONTRO ZOMBIE (2017) di Shinichiro Ueda, da ieri su #MUBI, è un film da vedere assolutamente. Geniale nella sua costruzione, i primi 40 minuti sono un lunghissimo piano sequenza, dopo il quale partono i titoli di coda. Finito direte? Macché, è solo l inizio.'
     tweet = processing_text(tweet)
     cl = r.classify(tweet, model, tokenizer)
     print(cl)
