@@ -1,5 +1,4 @@
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
-import torch
 from scipy.special import softmax
 
 

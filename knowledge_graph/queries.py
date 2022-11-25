@@ -77,12 +77,31 @@ def infos(uri):
             pass
         else:
             for i in range(len(r.json()['results']['bindings'])):
-                directors.append(r.json()['results']['bindings'][i]['l_director']['value'])
-                starring.append(r.json()['results']['bindings'][i]['l_starring']['value'])
-                distributor.append(r.json()['results']['bindings'][i]['l_distributor']['value'])
-                editing.append(r.json()['results']['bindings'][i]['l_editing']['value'])
-                musiccomposer.append(r.json()['results']['bindings'][i]['l_musicComposer']['value'])
-                producer.append(r.json()['results']['bindings'][i]['l_producer']['value'])
+                temp = r.json()['results']['bindings']
+                if temp[i]['l_director']['value'].find('(') == -1:
+                    directors.append(temp[i]['l_director']['value'])
+                else:
+                    directors.append(temp[i]['l_director']['value'][:temp[i]['l_director']['value'].find('(')-1])
+                if temp[i]['l_starring']['value'].find('(') == -1:
+                    starring.append(temp[i]['l_starring']['value'])
+                else:
+                    starring.append(temp[i]['l_starring']['value'][:temp[i]['l_starring']['value'].find('(')-1])
+                if temp[i]['l_distributor']['value'].find('(') == -1:
+                    distributor.append(temp[i]['l_distributor']['value'])
+                else:
+                    distributor.append(temp[i]['l_distributor']['value'][:temp[i]['l_distributor']['value'].find('(')-1])
+                if temp[i]['l_editing']['value'].find('(') == -1:
+                    editing.append(temp[i]['l_editing']['value'])
+                else:
+                    editing.append(temp[i]['l_editing']['value'][:temp[i]['l_editing']['value'].find('(')-1])
+                if temp[i]['l_musicComposer']['value'].find('(') == -1:
+                    musiccomposer.append(temp[i]['l_musicComposer']['value'])
+                else:
+                    musiccomposer.append(temp[i]['l_musicComposer']['value'][:temp[i]['l_musicComposer']['value'].find('(')-1])
+                if temp[i]['l_producer']['value'].find('(') == -1:
+                    producer.append(temp[i]['l_producer']['value'])
+                else:
+                    producer.append(temp[i]['l_producer']['value'][:temp[i]['l_producer']['value'].find('(')-1])
         directors = list(set(directors))
         starring = list(set(starring))
         distributor = list(set(distributor))

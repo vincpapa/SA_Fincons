@@ -1,5 +1,6 @@
 import pandas as pd
 import queries as q
+import pickle
 
 
 class BuildKG:
@@ -11,12 +12,16 @@ class BuildKG:
         df_film['uri'] = df_film['films'].map(lambda x: q.uri(x))
         df_film['directors'], df_film['starring'], df_film['distributor'], df_film['editing'],\
             df_film['musiccomposer'], df_film['producer'] = zip(*df_film['uri'].map((lambda x: q.infos(x))))
-        return df_film
+        df_film.set_index('films', inplace=True)
+        df_dict = df_film.to_dict('index')
+        return df_dict
 
 
 if __name__ == '__main__':
     lista = ['The Matrix', 'Toy Story', 'Last Dance', 'Grease']
     kg = BuildKG(lista)
-    df = kg.build()
-    print(df)
+    df_dict = kg.build()
+    # df.to_csv('../data/kg.tsv', sep='\t', index=False)
+    with open('../data/kg_dictionary.pkl', 'wb') as f:
+        pickle.dump(df_dict, f)
 
