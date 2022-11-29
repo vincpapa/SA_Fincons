@@ -28,10 +28,11 @@ class Twitter_APIs:
         print(response.text)
 
     def add_rule(self):
-        rule = self._build_rule()
+        rules = self._build_rule()
         payload = self.payload.copy()
         payload["add"] = []
-        payload["add"].append({"value": rule})
+        for rule in rules:
+            payload["add"].append({"value": rule})
         header = self.header.copy()
         header["Content-Type"] = 'application/json'
         response = requests.request("POST", self.endpoint_rules, headers=header, data=json.dumps(payload))
@@ -42,17 +43,23 @@ class Twitter_APIs:
             loaded_dict = pickle.load(f)
         elements = []
         for k, v in loaded_dict.items():
-            elements.append(k)
+            temp = []
+            temp.append(k)
+            # elements.append(k)
             for n, m in v.items():
                 if n != 'uri':
-                    elements.extend(m)
-
-        rule = '('
+                    temp.extend(m)
+                    # elements.extend(m)
+            elements.append(temp)
+        rules = []
         for element in elements:
-            base = f"entity:{element}"
-            rule = rule + base + ' OR '
-        rule = rule[:-4] + ') lang:en'
-        return rule
+            rule = '('
+            for entity in element:
+                base = f"entity:{entity}"
+                rule = rule + base + ' OR '
+            rule = rule[:-4] + ') lang:en'
+            rules.append(rule)
+        return rules
 
 
 
@@ -63,6 +70,6 @@ class Twitter_APIs:
 
 if __name__ == '__main__':
     api = Twitter_APIs('../data/kg_dictionary.pkl')
-    # api.see_rules()
-    # api.delete_rules(["1596170328178364417", "1596170328178364416"])
-    api.add_rule()
+    api.see_rules()
+    # api.delete_rules(["1596191955171655683"])
+    # api.add_rule()
