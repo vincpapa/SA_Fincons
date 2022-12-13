@@ -1,6 +1,9 @@
 import cleaning as c
 from lemming import lemmatizer
-import roberta as r
+import roberta
+import requests
+import ast
+import pickle
 
 
 def processing_text(text):
@@ -19,12 +22,34 @@ def processing_text(text):
 
 
 if __name__ == '__main__':
-    model, tokenizer = r.load_roberta()
-    #
-    tweet = 'ZOMBIE CONTRO ZOMBIE (2017) di Shinichiro Ueda, da ieri su #MUBI, è un film da vedere assolutamente. Geniale nella sua costruzione, i primi 40 minuti sono un lunghissimo piano sequenza, dopo il quale partono i titoli di coda. Finito direte? Macché, è solo l inizio.'
-    tweet = processing_text(tweet)
-    cl = r.classify(tweet, model, tokenizer)
-    print(cl)
+    model, tokenizer = roberta.load_roberta()
+    url = "https://api.twitter.com/2/tweets/search/stream"
+    payload = {}
+    headers = {
+        'Authorization': 'Bearer AAAAAAAAAAAAAAAAAAAAAA66iwEAAAAAbZtdwOgdYQCUNzPRVopb%2F15CnjQ%3D5iGK97uwYF461cOrCaNZ2tQqAHAHVLVeGBkvcsofaa4TSDKLtm',
+        'Content-Type': 'application/json',
+        'Cookie': 'guest_id=v1%3A166921382095182903'
+    }
+    with open('data/kg_dictionary.pkl', 'rb') as f:
+        loaded_dict = pickle.load(f)
+    # response = requests.request("GET", url, headers=headers, data=payload)
+    with requests.get(url, headers=headers, data=payload, stream=True) as r:
+        for line in r.iter_lines():
+            if line:
+                print(line)
+                line = ast.literal_eval(line.decode('utf-8'))
+                text = line['data']['text']
+                matching_rule = line['matching_rules'][0]['id']
+                text = processing_text(text)
+                cl = roberta.classify(text, model, tokenizer)
+                for k, v in loaded_dict.items():
+                    if matching_rule in v['rule']:
+                        v['positive'] = v['positive'] + cl['Positive']
+                        v['negative'] = v['negative'] + cl['Negative']
+                        v['neutral'] = v['neutral'] + cl['Neutral']
+                with open('../data/kg_dictionary.pkl', 'wb') as f:
+                    pickle.dump(df_dict, f)
+
 
 
 

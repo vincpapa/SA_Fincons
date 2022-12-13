@@ -1,5 +1,6 @@
 import requests
 import json
+import ast
 
 url = "https://api.twitter.com/2/tweets/search/stream"
 payload={}
@@ -13,4 +14,9 @@ headers = {
 with requests.get(url, headers=headers, data=payload, stream=True) as r:
   for line in r.iter_lines():
     if line:
-      print(line)
+      line = ast.literal_eval(line.decode('utf-8'))
+      text = line['data']['text']
+      matching_rule = line['matching_rules'][0]['id']
+      a = line
+      break
+print(a)
