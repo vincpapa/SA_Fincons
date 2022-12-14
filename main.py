@@ -48,7 +48,7 @@ if __name__ == '__main__':
                         v['negative'] = v['negative'] + cl['Negative']
                         v['neutral'] = v['neutral'] + cl['Neutral']
                 with open('../data/kg_dictionary.pkl', 'wb') as f:
-                    pickle.dump(df_dict, f)
+                    pickle.dump(loaded_dict, f)
 
 
 
